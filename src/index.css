@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* ─── Ensure full-height layout chain ───────────────────────────── */
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ─── Leaflet ↔ Tailwind v4 compatibility fixes ────────────────── */
+
+/* Leaflet compatibility */
+@layer base {
+  .leaflet-container {
+    font-family: inherit;
+    background: #020617;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: pan-y pinch-zoom;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* 1. Tile images must be inline (Leaflet relies on this) */
+  .leaflet-container img.leaflet-tile {
+    display: inline !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+
+  /* 2. Tile pane box-sizing must be content-box or tiles overlap/gap */
+  .leaflet-tile-pane img {
+    box-sizing: content-box !important;
+  }
+
+  /* 3. Prevent Tailwind's border reset from adding a border to tiles */
+  .leaflet-tile {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+  .leaflet-tile-loaded {
+    opacity: 1;
+  }
+
+  /* 4. Leaflet icon imgs need inline-block and no border */
+  .leaflet-marker-icon img,
+  .leaflet-marker-shadow img {
+    display: inline-block !important;
+    border: none !important;
+    max-width: none !important;
+  }
+
+  /* 5. The SVG overlay must fill its container correctly */
+  .leaflet-overlay-pane svg {
+    display: block !important;
+  }
+}
+
+/* ─── GPU Acceleration & Rendering Optimizations ─── */
+.leaflet-tile-pane {
+  image-rendering: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  pointer-events: auto;
+}
+
+.leaflet-marker-pane,
+.leaflet-tooltip-pane,
+.leaflet-popup-pane {
+  will-change: transform;
+}
+
+/* Leaflet controls styles from v1.0 */
+.leaflet-control-zoom {
+  border: 1px solid #334155 !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background-color: #334155 !important;
+  color: #38bdf8 !important;
+}
+
+.leaflet-control-layers {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 0.75rem !important;
+  color: #cbd5e1 !important;
+}
+
+.leaflet-control-layers-toggle {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 0.75rem !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.leaflet-control-layers label {
+  color: #cbd5e1 !important;
+  font-size: 12px !important;
+  font-family: monospace !important;
+}
+
+/* Custom tooltip styling */
+.custom-leaflet-tooltip.leaflet-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.custom-leaflet-tooltip.leaflet-tooltip::before {
+  display: none !important;
+}
+
+/* ─── POI Icon Marker Styles ──────────────────────────────────── */
+
+.poi-marker-icon {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border: none !important;
+  background: transparent !important;
+  transition: transform 0.2s ease;
+}
+
+.poi-marker-icon:hover {
+  transform: scale(1.15);
+  z-index: 10000 !important;
+}
+
+.poi-marker-icon svg {
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
+@keyframes marker-glow {
+  0%, 100% { box-shadow: 0 0 8px 2px var(--glow-color, rgba(56,189,248,0.6)); }
+  50% { box-shadow: 0 0 16px 6px var(--glow-color, rgba(56,189,248,0.8)); }
+}
+
+.poi-marker-selected {
+  animation: marker-glow 2s ease-in-out infinite;
+}
+
+/* Toast animations */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.toast-item {
+  animation: toast-in 0.2s ease-out;
+}
+
+/* ─── UI Performance Enhancements ─────────────────────────────── */
+
+.content-visible-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 100px;
+}
+
+/* ─── Premium Scrollbar Styling ───────────────────────────────── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ─── Micro-animation Utilities ───────────────────────────────── */
+
+@keyframes subtle-shimmer {
+  0%   { opacity: 0.7; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.animate-shimmer {
+  animation: subtle-shimmer 3s ease-in-out infinite;
+}
+
+.active\:scale-98:active {
+  transform: scale(0.98);
+}
+
+/* ─── Glassmorphism Helpers ────────────────────────────────────── */
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}

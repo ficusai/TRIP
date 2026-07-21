@@ -1,0 +1,36 @@
+# TAG: build.gitignore - Project Git Ignore Rules (ARCHITECTURE.md)
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Session logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+.cache/
