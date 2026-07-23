@@ -1,7 +1,7 @@
 # Architecture — Trip Mapper v1.0
 
 **Version:** 1.0.0  
-**Last Updated:** 2026-07-21
+**Last Updated:** 2026-07-23
 
 ## Overview
 
@@ -36,8 +36,11 @@ Trip Mapper v1.0 is a minimal viable product (MVP) built with React 19, TypeScri
 ```
 trip-mapper v1.0/
 ├── .github/
-│   ├── workflows/           # CI/CD workflows
-│   └── ISSUE_TEMPLATE/      # Issue and PR templates
+│   ├── workflows/           # CI/CD workflows (ci.yml, codeql.yml)
+│   ├── ISSUE_TEMPLATE/      # Issue templates (bug report, feature request)
+│   ├── pull_request_template.md
+│   ├── CODEOWNERS           # Code ownership rules
+│   └── FUNDING.yml          # GitHub Sponsors configuration
 ├── src/
 │   ├── components/
 │   │   └── Toast.tsx          # Toast notification component
@@ -57,12 +60,17 @@ trip-mapper v1.0/
 ├── package.json               # Dependencies and scripts
 ├── package-lock.json          # Dependency lockfile for reproducible builds
 ├── tsconfig.json              # TypeScript configuration
+├── tsdoc.json                 # TSDoc config for @tag custom tag system
 ├── vite.config.ts             # Vite build configuration
+├── .env.example               # Environment variable template
 ├── .gitignore                 # Git ignore rules (excludes node_modules, dist, logs, etc.)
 ├── architecture.md            # Detailed architecture documentation
 ├── README.md                  # User-facing documentation
 ├── CONTRIBUTING.md            # Contributing guidelines
 ├── CHANGELOG.md               # Version history and changes
+├── CODE_OF_CONDUCT.md         # Contributor Covenant v2.1
+├── SECURITY.md                # Security vulnerability reporting policy
+├── SUPPORT.md                 # Support and help resources
 ├── LICENSE                    # Apache-2.0 license
 └── GITHUB_SETUP.md            # GitHub publishing setup checklist
 ```
@@ -508,11 +516,16 @@ Each phase can build on the existing architecture without requiring structural c
 - **CONTRIBUTING.md**: Contributing guidelines and development workflow
 - **CHANGELOG.md**: Version history and changes
 - **GITHUB_SETUP.md**: GitHub publishing setup checklist
+- **CODE_OF_CONDUCT.md**: Contributor Covenant Code of Conduct
+- **SECURITY.md**: Security vulnerability reporting policy
+- **SUPPORT.md**: Support and help resources
 - **LICENSE**: Apache-2.0 license
 - **package.json**: Dependency versions and scripts
 - **tsconfig.json**: TypeScript configuration details
+- **tsdoc.json**: TSDoc configuration for @tag custom tag system
 - **vite.config.ts**: Build configuration details
 - **index.html**: HTML entry point with meta tags
+- **.env.example**: Environment variable template
 
 ## License
 

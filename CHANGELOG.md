@@ -5,6 +5,27 @@ All notable changes to Trip Mapper v1.0 will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-07-23
+
+### Added — GitHub Publishing Preparation
+- **Community & Governance Files**
+  - `CODE_OF_CONDUCT.md` — Contributor Covenant v2.1
+  - `SECURITY.md` — Security vulnerability reporting policy
+  - `SUPPORT.md` — Support and help resources documentation
+  - `.github/CODEOWNERS` — Code ownership rules (@ficusai)
+  - `.github/FUNDING.yml` — GitHub Sponsors configuration
+- **Development Configuration**
+  - `tsdoc.json` — TSDoc configuration for `@tag` custom tag system
+  - `.env.example` — Environment variable template for `VITE_LOGGING_ENABLED`
+
+### Changed
+- **Documentation Updates**
+  - `README.md` — Replaced all `your-username` placeholders with `ficusai`, added new files to project structure
+  - `CONTRIBUTING.md` — Replaced `your-username` with `ficusai` in clone URL
+  - `LICENSE` — Replaced copyright placeholder with `ficusai`
+  - `GITHUB_SETUP.md` — Marked completed items, updated contact information
+  - `architecture.md` — Added new files to project structure, updated date and documentation references
+
 ## [1.0.0] - 2026-07-21
 
 ### Added

@@ -41,6 +41,14 @@ Trip Mapper v1.0 is a React-based web application foundation for an offline-firs
 - ⏳ Import/export features
 - ⏳ User interface components
 
+**Community & Governance:**
+- ✅ Code of Conduct (Contributor Covenant v2.1)
+- ✅ Security policy (SECURITY.md)
+- ✅ Support documentation (SUPPORT.md)
+- ✅ Code owners (.github/CODEOWNERS)
+- ✅ TSDoc configuration for @tag system
+- ✅ Environment variable template (.env.example)
+
 ## Quick Start
 
 ### Prerequisites
@@ -95,8 +103,11 @@ npm run lint
 ```
 trip-mapper v1.0/
 ├── .github/
-│   ├── workflows/           # CI/CD workflows
-│   └── ISSUE_TEMPLATE/      # Issue and PR templates
+│   ├── workflows/           # CI/CD workflows (ci.yml, codeql.yml)
+│   ├── ISSUE_TEMPLATE/      # Issue templates (bug report, feature request)
+│   ├── pull_request_template.md
+│   ├── CODEOWNERS           # Code ownership rules
+│   └── FUNDING.yml          # GitHub Sponsors configuration
 ├── src/
 │   ├── components/
 │   │   └── Toast.tsx          # Toast notification component
@@ -105,25 +116,29 @@ trip-mapper v1.0/
 │   ├── App.tsx                # Main application component
 │   ├── main.tsx               # Application entry point
 │   ├── index.css              # Global styles
-│   └── vite-env.d.ts          # Vite client TypeScript types (/// <reference types="vite/client" />)
+│   └── vite-env.d.ts          # Vite client TypeScript types
 ├── vite-plugins/
 │   └── logWriter.ts           # Vite plugin for session logging
 ├── public/
-│   └── favicon.svg            # App icon file (unused - favicon is inlined in index.html via data URI)
-├── logs/                      # Session log files (generated)
+│   └── favicon.svg            # App icon file (unused - favicon is inlined in index.html)
+├── logs/                      # Session log files (gitignored)
 ├── index.html                 # HTML entry point
 ├── launcher.sh                # Development launcher
 ├── package.json               # Dependencies and scripts
-├── package-lock.json          # Dependency lockfile for reproducible builds
+├── package-lock.json          # Dependency lockfile
 ├── tsconfig.json              # TypeScript configuration
+├── tsdoc.json                 # TSDoc config for @tag system
 ├── vite.config.ts             # Vite configuration
-├── .gitignore                 # Git ignore rules (excludes node_modules, dist, logs, etc.)
-├── architecture.md            # Detailed architecture documentation
-├── README.md                  # This file
+├── .env.example               # Environment variable template
+├── .gitignore                 # Git ignore rules
+├── CODE_OF_CONDUCT.md         # Contributor Covenant v2.1
 ├── CONTRIBUTING.md            # Contributing guidelines
-├── CHANGELOG.md               # Version history and changes
+├── CHANGELOG.md               # Version history
+├── GITHUB_SETUP.md            # GitHub publishing checklist
 ├── LICENSE                    # Apache-2.0 license
-└── GITHUB_SETUP.md            # GitHub publishing setup checklist
+├── README.md                  # This file
+├── SECURITY.md                # Security policy
+└── SUPPORT.md                 # Support and help resources
 ```
 
 ## Core Components
@@ -362,8 +377,8 @@ Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for g
 
 ## Support
 
-- **Issues**: Report bugs and request features via [GitHub Issues](https://github.com/your-username/trip-mapper-v1.0/issues)
-- **Discussions**: Ask questions and discuss ideas via [GitHub Discussions](https://github.com/your-username/trip-mapper-v1.0/discussions)
+- **Issues**: Report bugs and request features via [GitHub Issues](https://github.com/ficusai/trip-mapper-v1.0/issues)
+- **Discussions**: Ask questions and discuss ideas via [GitHub Discussions](https://github.com/ficusai/trip-mapper-v1.0/discussions)
 - **Documentation**: 
   - [architecture.md](./architecture.md) - Detailed architecture documentation
   - [CHANGELOG.md](./CHANGELOG.md) - Version history and changes

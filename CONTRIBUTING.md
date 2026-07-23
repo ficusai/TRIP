@@ -13,7 +13,7 @@ Thank you for your interest in contributing to Trip Mapper v1.0! This document p
 
 1. **Fork and clone the repository**
    ```bash
-   git clone https://github.com/[your-username]/trip-mapper-v1.0.git
+   git clone https://github.com/[ficusai]/trip-mapper-v1.0.git
    cd trip-mapper-v1.0
    ```
 

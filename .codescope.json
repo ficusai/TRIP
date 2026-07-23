@@ -1,0 +1,53 @@
+{
+  "project": {
+    "name": "trip-mapper-v1.0",
+    "description": "Code graph for trip-mapper-v1.0",
+    "project_path": "/home/ficus-pro/Documents/trip-mapper-v1.0"
+  },
+  "analysis": {
+    "include": [
+      "**/*.py",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx"
+    ],
+    "exclude": [
+      "node_modules/**",
+      ".venv/**",
+      "__pycache__/**",
+      "*.test.*",
+      "*.spec.*",
+      "dist/**",
+      "build/**"
+    ],
+    "connections": {
+      "imports": true,
+      "function_calls": true,
+      "class_inheritance": true,
+      "variable_references": true
+    }
+  },
+  "visualization": {
+    "default_view": "combined",
+    "layout": "force-directed",
+    "node_size": "lines_of_code",
+    "show_labels": true,
+    "show_edge_labels": true
+  },
+  "auto_update": {
+    "enabled": true,
+    "debounce_ms": 500,
+    "watch_patterns": [
+      "**/*.py",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx"
+    ]
+  },
+  "metadata": {
+    "created_at": "2026-07-23T02:57:34.795801",
+    "codescope_version": "1.0.0"
+  }
+}
