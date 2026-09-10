@@ -48,33 +48,46 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   render(): ReactNode {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
+    try {
+      if (this.state.hasError) {
+        if (this.props.fallback) {
+          return this.props.fallback;
+        }
+
+        return (
+          <div className="flex h-screen w-full flex-col items-center justify-center bg-slate-950 text-slate-200 font-sans p-8">
+            <h1 className="text-xl font-bold text-rose-400 mb-2">
+              Something went wrong
+            </h1>
+            <p className="text-sm text-slate-400 mb-4 max-w-md text-center">
+              {this.state.error?.message ?? 'An unexpected error occurred.'}
+            </p>
+            <button
+              onClick={() => {
+                try {
+                  this.setState({ hasError: false, error: null });
+                  log.step('error-boundary-reset');
+                } catch (err) {
+                  log.error(err, 'error-boundary-reset-failed');
+                }
+              }}
+              className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-600 text-slate-200 text-sm hover:bg-slate-700 transition-colors"
+            >
+              Try again
+            </button>
+          </div>
+        );
       }
 
+      return this.props.children;
+    } catch (err) {
+      log.error(err, 'ErrorBoundary-render-crash');
       return (
         <div className="flex h-screen w-full flex-col items-center justify-center bg-slate-950 text-slate-200 font-sans p-8">
-          <h1 className="text-xl font-bold text-rose-400 mb-2">
-            Something went wrong
-          </h1>
-          <p className="text-sm text-slate-400 mb-4 max-w-md text-center">
-            {this.state.error?.message ?? 'An unexpected error occurred.'}
-          </p>
-          <button
-            onClick={() => {
-              this.setState({ hasError: false, error: null });
-              log.step('error-boundary-reset');
-            }}
-            className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-600 text-slate-200 text-sm hover:bg-slate-700 transition-colors"
-          >
-            Try again
-          </button>
+          <h1 className="text-xl font-bold text-rose-400">Fatal Crash</h1>
         </div>
       );
     }
-
-    return this.props.children;
   }
 }
 
@@ -86,11 +99,19 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
  * @see {@link ErrorBoundary} for the wrapping error boundary
  */
 export default function App(): ReactNode {
-  return (
-    <ErrorBoundary>
-      <div className="flex h-screen w-full items-center justify-center bg-slate-950 text-slate-200 font-sans">
-        <h1 className="text-2xl font-bold">Trip Mapper</h1>
-      </div>
-    </ErrorBoundary>
-  );
+  try {
+    log.entry();
+    const result = (
+      <ErrorBoundary>
+        <div className="flex h-screen w-full items-center justify-center bg-slate-950 text-slate-200 font-sans">
+          <h1 className="text-2xl font-bold">Trip Mapper</h1>
+        </div>
+      </ErrorBoundary>
+    );
+    log.exit({ status: 'success' });
+    return result;
+  } catch (err) {
+    log.error(err, 'App-render');
+    throw err;
+  }
 }

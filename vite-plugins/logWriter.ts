@@ -24,41 +24,49 @@ export function logWriterPlugin(): Plugin {
   let stream: fs.WriteStream | null = null;
 
   function openSession(): void {
-    if (!fs.existsSync(logsDir)) {
-      fs.mkdirSync(logsDir, { recursive: true });
+    try {
+      if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir, { recursive: true });
+      }
+
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      sessionFile = path.join(logsDir, `session-${stamp}.txt`);
+
+      stream = fs.createWriteStream(sessionFile, { flags: 'a' });
+
+      const header = [
+        '═══════════════════════════════════════════════════════════',
+        `  Trip Mapper v1.0 — Session Log`,
+        `  Started: ${new Date().toISOString()}`,
+        `  File:    ${sessionFile}`,
+        '═══════════════════════════════════════════════════════════',
+        '',
+      ].join('\n');
+
+      stream.write(header);
+      console.log(`[log-writer] session started → ${sessionFile}`);
+    } catch (err) {
+      console.error('[log-writer] failed to open session:', err);
     }
-
-    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-    sessionFile = path.join(logsDir, `session-${stamp}.txt`);
-
-    stream = fs.createWriteStream(sessionFile, { flags: 'a' });
-
-    const header = [
-      '═══════════════════════════════════════════════════════════',
-      `  Trip Mapper v1.0 — Session Log`,
-      `  Started: ${new Date().toISOString()}`,
-      `  File:    ${sessionFile}`,
-      '═══════════════════════════════════════════════════════════',
-      '',
-    ].join('\n');
-
-    stream.write(header);
-    console.log(`[log-writer] session started → ${sessionFile}`);
   }
 
   function closeSession(): void {
-    if (stream) {
-      const footer = [
-        '',
-        '═══════════════════════════════════════════════════════════',
-        `  Session ended: ${new Date().toISOString()}`,
-        '═══════════════════════════════════════════════════════════',
-      ].join('\n');
+    try {
+      if (stream) {
+        const footer = [
+          '',
+          '═══════════════════════════════════════════════════════════',
+          `  Session ended: ${new Date().toISOString()}`,
+          '═══════════════════════════════════════════════════════════',
+        ].join('\n');
 
-      stream.write(footer);
-      stream.end();
-      stream = null;
-      console.log(`[log-writer] session closed → ${sessionFile}`);
+        stream.write(footer);
+        stream.end();
+        stream = null;
+        console.log(`[log-writer] session closed → ${sessionFile}`);
+      }
+    } catch (err) {
+      console.error('[log-writer] failed to close session:', err);
     }
   }
 
@@ -67,80 +75,104 @@ export function logWriterPlugin(): Plugin {
 
     configureServer(server) {
       server.middlewares.use('/__log/status', (_req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ enabled }));
+        try {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ enabled }));
+        } catch (err) {
+          console.error('[log-writer] /__log/status error:', err);
+        }
       });
 
       server.middlewares.use('/__log/toggle', (_req, res) => {
-        if (_req.method !== 'POST') {
-          res.statusCode = 405;
-          res.end(JSON.stringify({ error: 'POST required' }));
-          return;
+        try {
+          if (_req.method !== 'POST') {
+            res.statusCode = 405;
+            res.end(JSON.stringify({ error: 'POST required' }));
+            return;
+          }
+
+          enabled = !enabled;
+          const msg = enabled ? 'enabled' : 'disabled';
+          console.log(`[log-writer] logging ${msg}`);
+
+          if (enabled && !stream) {
+            openSession();
+          }
+
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ enabled }));
+        } catch (err) {
+          console.error('[log-writer] /__log/toggle error:', err);
         }
-
-        enabled = !enabled;
-        const msg = enabled ? 'enabled' : 'disabled';
-        console.log(`[log-writer] logging ${msg}`);
-
-        if (enabled && !stream) {
-          openSession();
-        }
-
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ enabled }));
       });
 
       server.middlewares.use('/__log', (req, res) => {
-        if (req.method !== 'POST') {
-          res.statusCode = 405;
-          res.end(JSON.stringify({ error: 'POST required' }));
-          return;
-        }
-
-        if (!enabled) {
-          res.statusCode = 503;
-          res.end(JSON.stringify({ enabled: false }));
-          return;
-        }
-
-        let body = '';
-        req.on('data', (chunk: Buffer) => {
-          body += chunk.toString();
-        });
-
-        req.on('end', () => {
-          try {
-            const lines: string[] = JSON.parse(body);
-
-            if (!stream) {
-              openSession();
-            }
-
-            for (const line of lines) {
-              stream!.write(line + '\n');
-            }
-
-            res.statusCode = 204;
-            res.end();
-          } catch (err) {
-            console.error('[log-writer] failed to write log line:', err);
-            res.statusCode = 500;
-            res.end(JSON.stringify({ error: 'write failed' }));
+        try {
+          if (req.method !== 'POST') {
+            res.statusCode = 405;
+            res.end(JSON.stringify({ error: 'POST required' }));
+            return;
           }
-        });
+
+          if (!enabled) {
+            res.statusCode = 503;
+            res.end(JSON.stringify({ enabled: false }));
+            return;
+          }
+
+          let body = '';
+          req.on('data', (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+
+          req.on('end', () => {
+            try {
+              const lines: string[] = JSON.parse(body);
+
+              if (!stream) {
+                openSession();
+              }
+
+              for (const line of lines) {
+                stream!.write(line + '\n');
+              }
+
+              res.statusCode = 204;
+              res.end();
+            } catch (err) {
+              console.error('[log-writer] failed to write log line:', err);
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: 'write failed' }));
+            }
+          });
+        } catch (err) {
+          console.error('[log-writer] /__log error:', err);
+        }
       });
     },
 
     buildStart() {
-      console.log('[log-writer] plugin initialized');
+      try {
+        console.log('[log-writer] plugin initialized');
+      } catch (err) {
+        console.error('[log-writer] buildStart error:', err);
+      }
     },
 
     buildEnd() {
-      closeSession();
+      try {
+        closeSession();
+      } catch (err) {
+        console.error('[log-writer] buildEnd error:', err);
+      }
     },
 
     closeBundle() {
-      closeSession();
+      try {
+        closeSession();
+      } catch (err) {
+        console.error('[log-writer] closeBundle error:', err);
+      }
     },
   };
 }

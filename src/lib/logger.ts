@@ -94,65 +94,100 @@ function formatLine(level: LogLevel, context: string, stage: string, message: st
 // ─── Transport: console ─────────────────────────────────────────────
 
 function writeConsole(level: LogLevel, line: string): void {
-  switch (level) {
-    case 'error':
-      console.error(line);
-      break;
-    case 'warn':
-      console.warn(line);
-      break;
-    default:
-      console.log(line);
+  try {
+    switch (level) {
+      case 'error':
+        console.error(line);
+        break;
+      case 'warn':
+        console.warn(line);
+        break;
+      default:
+        console.log(line);
+    }
+  } catch (err) {
+    // Ignore console errors
   }
 }
 
 // ─── Transport: session file via POST ───────────────────────────────
 
 function flushToServer(): void {
-  if (sessionLines.length === 0) return;
-  if (!devServerReachable) return;
+  try {
+    if (sessionLines.length === 0) return;
+    if (!devServerReachable) return;
 
-  const batch = sessionLines.splice(0);
+    const batch = sessionLines.splice(0);
+    
+    let body: string;
+    try {
+      body = JSON.stringify(batch);
+    } catch {
+      body = "[]";
+    }
 
-  fetch('/__log', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(batch),
-  }).catch(() => {
-    devServerReachable = false;
-    // Logs already in sessionLines were spliced — re-add to buffer
-    // so they aren't lost if the server comes back.
-    sessionLines.unshift(...batch);
-  });
+    fetch('/__log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+    }).catch(() => {
+      devServerReachable = false;
+      // Logs already in sessionLines were spliced — re-add to buffer
+      // so they aren't lost if the server comes back.
+      sessionLines.unshift(...batch);
+    });
+  } catch (err) {
+    console.error('logger flushToServer failed', err);
+  }
 }
 
 function scheduleFlush(): void {
-  if (postTimer !== null) return;
-  postTimer = setTimeout(() => {
-    postTimer = null;
-    flushToServer();
-  }, 200);
+  try {
+    if (postTimer !== null) return;
+    postTimer = setTimeout(() => {
+      try {
+        postTimer = null;
+        flushToServer();
+      } catch (err) {
+        console.error('logger scheduleFlush timeout failed', err);
+      }
+    }, 200);
+  } catch (err) {
+    console.error('logger scheduleFlush failed', err);
+  }
 }
 
 function bufferLine(line: string): void {
-  sessionLines.push(line);
-  scheduleFlush();
+  try {
+    sessionLines.push(line);
+    scheduleFlush();
+  } catch (err) {
+    console.error('logger bufferLine failed', err);
+  }
 }
 
 // ─── Core write ─────────────────────────────────────────────────────
 
 function write(level: LogLevel, context: string, stage: string, message: string, data?: unknown): void {
-  if (!isEnabled()) return;
-  if (!shouldLog(level)) return;
+  try {
+    if (!isEnabled()) return;
+    if (!shouldLog(level)) return;
 
-  const line = formatLine(level, context, stage, message, data);
+    const line = formatLine(level, context, stage, message, data);
 
-  writeConsole(level, line);
-  bufferLine(line);
+    writeConsole(level, line);
+    bufferLine(line);
+  } catch (err) {
+    console.error('logger write failed', err);
+  }
 }
 
 function shouldLog(level: LogLevel): boolean {
-  return LEVEL_PRIORITY[level] >= LEVEL_PRIORITY[MIN_LEVEL];
+  try {
+    return LEVEL_PRIORITY[level] >= LEVEL_PRIORITY[MIN_LEVEL];
+  } catch {
+    return true;
+  }
 }
 
 // ─── Public API ─────────────────────────────────────────────────────
@@ -237,15 +272,28 @@ declare global {
 }
 
 function installGlobals(): void {
-  if (typeof window === 'undefined') return;
+  try {
+    if (typeof window === 'undefined') return;
 
-  window.__tripMapperLog = (enabled: boolean) => {
-    setLoggingEnabled(enabled);
-  };
+    window.__tripMapperLog = (enabled: boolean) => {
+      try {
+        setLoggingEnabled(enabled);
+      } catch (err) {
+        console.error('window.__tripMapperLog failed', err);
+      }
+    };
 
-  window.__tripMapperLogStatus = () => {
-    return isLoggingEnabled();
-  };
+    window.__tripMapperLogStatus = () => {
+      try {
+        return isLoggingEnabled();
+      } catch (err) {
+        console.error('window.__tripMapperLogStatus failed', err);
+        return false;
+      }
+    };
+  } catch (err) {
+    console.error('installGlobals failed', err);
+  }
 }
 
 installGlobals();

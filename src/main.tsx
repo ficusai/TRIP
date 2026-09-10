@@ -24,20 +24,26 @@ const log = createLogger('app.main');
  * @param detail - The error detail message
  */
 function renderFatalError(target: HTMLElement, title: string, detail: string): void {
-  log.step('render-fallback', { title, detail });
+  try {
+    log.entry({ target: target.id, title, detail });
 
-  const container = document.createElement('div');
-  container.style.cssText = 'padding:2rem;color:#f87171;font-family:monospace;';
+    const container = document.createElement('div');
+    container.style.cssText = 'padding:2rem;color:#f87171;font-family:monospace;';
 
-  const heading = document.createElement('h1');
-  heading.textContent = title;
+    const heading = document.createElement('h1');
+    heading.textContent = title;
 
-  const paragraph = document.createElement('p');
-  paragraph.textContent = detail;
+    const paragraph = document.createElement('p');
+    paragraph.textContent = detail;
 
-  container.appendChild(heading);
-  container.appendChild(paragraph);
-  target.appendChild(container);
+    container.appendChild(heading);
+    container.appendChild(paragraph);
+    target.appendChild(container);
+    log.exit();
+  } catch (err) {
+    log.error(err, 'renderFatalError');
+    console.error('Fatal error render failed:', err);
+  }
 }
 
 /**
@@ -47,38 +53,42 @@ function renderFatalError(target: HTMLElement, title: string, detail: string): v
  * @tag app.main.mount - DOM Mount (ARCHITECTURE.md)
  */
 function mountApp(): void {
-  log.entry();
-
-  const rootElement = document.getElementById('root');
-  if (!rootElement) {
-    log.error(new Error('Root element #root not found in DOM'), 'mount');
-    renderFatalError(
-      document.body,
-      'Fatal: #root element missing',
-      'Check that index.html contains a div with id="root".',
-    );
-    return;
-  }
-  log.step('root-element-found', { id: rootElement.id });
-
   try {
-    const root = ReactDOM.createRoot(rootElement);
+    log.entry();
 
-    root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>,
-    );
+    const rootElement = document.getElementById('root');
+    if (!rootElement) {
+      log.error(new Error('Root element #root not found in DOM'), 'mount');
+      renderFatalError(
+        document.body,
+        'Fatal: #root element missing',
+        'Check that index.html contains a div with id="root".',
+      );
+      return;
+    }
+    log.step('root-element-found', { id: rootElement.id });
 
-    log.step('render-queued');
-    log.exit({ status: 'success' });
+    try {
+      const root = ReactDOM.createRoot(rootElement);
+
+      root.render(
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>,
+      );
+
+      log.step('render-queued');
+      log.exit({ status: 'success' });
+    } catch (err) {
+      log.error(err, 'mount');
+      renderFatalError(
+        rootElement,
+        'Failed to render application',
+        err instanceof Error ? err.message : String(err),
+      );
+    }
   } catch (err) {
-    log.error(err, 'mount');
-    renderFatalError(
-      rootElement,
-      'Failed to render application',
-      err instanceof Error ? err.message : String(err),
-    );
+    console.error('Super fatal error in mountApp:', err);
   }
 }
 

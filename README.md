@@ -21,6 +21,8 @@ Trip Mapper v1.0 is a React-based web application foundation for an offline-firs
 - ✅ Tailwind CSS v4 styling framework
 - ✅ Centralized structured logging system
 - ✅ Error boundary with graceful fallback
+- ✅ 100% try-catch error coverage across all source files
+- ✅ Automatic session file logging
 - ✅ Toast notification infrastructure
 - ✅ Development launcher script
 - ✅ Leaflet mapping integration (ready for implementation)
@@ -157,7 +159,7 @@ trip-mapper v1.0/
 - Centralized logging for all application code
 - Multi-level logging (trace, debug, info, warn, error)
 - Runtime toggle via localStorage or HTTP API
-- Session file writing via Vite plugin
+- **Automatic Session Logging**: Every run of the dev server automatically streams logs to a dedicated file (`logs/session-*.txt`), capturing all `log.entry`, `log.step`, and `log.error` payloads natively.
 
 **Usage:**
 ```typescript
@@ -322,8 +324,8 @@ See [architecture.md](./architecture.md) for detailed documentation on:
 - Log all significant operations via centralized logger
 
 ### Error Handling
-- Always use try-catch around async operations
-- Log errors via `logger.error()`
+- **100% Try-Catch Coverage**: Absolutely every operation (including root-level component renders, hooks, timeouts, config loading, etc.) must be wrapped in `try-catch` blocks.
+- Log errors via `logger.error()` explicitly to prevent silent failures.
 - Provide user-friendly error messages
 - Use error boundaries for component trees
 

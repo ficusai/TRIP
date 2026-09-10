@@ -132,7 +132,7 @@ trip-mapper v1.0/
 **Transport Methods:**
 - Console output with appropriate method (`console.log`, `console.warn`, `console.error`)
 - Batched HTTP POST to `/__log` endpoint (200ms debounce)
-- Session file writing via Vite plugin
+- **Automatic Session Logging**: During development, the Vite plugin automatically writes all incoming logs into a dedicated timestamped file (`logs/session-YYYY-MM-DDTHH-MM-SS.txt`) making it effortless to trace interactions and debug errors post-mortem.
 
 **TAG:** `utils.logger`, `utils.logger.create`, `utils.logger.toggle`, `utils.logger.is-enabled`
 
@@ -274,12 +274,19 @@ Write to logs/session-YYYY-MM-DDTHH-MM-SS.txt
 
 ### Error Handling Flow
 
+**Extreme Resilience Policy (100% Try-Catch Coverage):**
+- Every component render method, lifecycle hook (`useEffect`), global callback, timer (`setTimeout`), and file system operation is wrapped in a top-level `try-catch` block.
+- If a deep crash occurs, it is caught locally first and logged via `logger.error()`.
+- If a component throws outside its local bounds, it gets caught by the global error boundary.
+
 ```
-Component Error
+Component Error / Execution Failure
     ↓
-ErrorBoundary.componentDidCatch()
+Local catch block intercepts and logs to logger
     ↓
-log.error() → Centralized logging
+If uncaught, ErrorBoundary.componentDidCatch()
+    ↓
+log.error() → Centralized logging → session log file
     ↓
 Fallback UI rendering
     ↓
@@ -472,8 +479,8 @@ These tags enable automated architecture documentation and code navigation.
 - Log all significant operations via centralized logger
 
 ### Error Handling
-- Always use try-catch around async operations
-- Log errors via `logger.error()`
+- **Extreme Coverage Requirement**: Every synchronous and asynchronous operation, including render logic and plugin configurations, must be wrapped in robust `try-catch` blocks.
+- Log errors immediately via `logger.error()`.
 - Provide user-friendly error messages
 - Use error boundaries for component trees
 
