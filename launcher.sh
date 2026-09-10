@@ -14,6 +14,12 @@ error() {
 }
 
 # ── Step 1: Verify Node.js is available ──────────────────────────────
+export NVM_DIR="$HOME/.nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  . "$NVM_DIR/nvm.sh" --no-use
+  nvm use 22 &>/dev/null || nvm use default &>/dev/null || true
+fi
+
 if ! command -v node &>/dev/null; then
   error "Node.js is not installed or not in PATH"
   exit 1
