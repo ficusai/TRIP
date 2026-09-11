@@ -13,6 +13,16 @@
 
 Trip Mapper v1.0 is a React-based web application foundation for an offline-first world tour route planner. This version establishes the core architecture, build system, and development infrastructure for future feature development.
 
+## Supported Operating Systems
+
+| Operating System | Supported |
+| :--- | :---: |
+| LINUX | ✅ |
+| WINDOWS | ✅ |
+| MACOS | ✅ |
+| ANDROID | ✅ |
+| IOS | ✅ |
+
 ## Current State
 
 **What's Implemented:**
