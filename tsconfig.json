@@ -1,25 +1,41 @@
 {
+  // Compiler options control how TypeScript checks and translates this project.
   "compilerOptions": {
+    // Target modern JavaScript available in ES2020; do not downgrade syntax unnecessarily.
     "target": "ES2020",
+    // Use standard JavaScript class-field behavior instead of an older assignment pattern.
     "useDefineForClassFields": true,
+    // Make standard ES2020, browser DOM, and iterable DOM types available to the checker.
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    // Keep ES module syntax so Vite can bundle the code without converting it to CommonJS.
     "module": "ESNext",
+    // Skip type-checking declaration files from dependencies to reduce noise and build time.
     "skipLibCheck": true,
 
-    /* Bundler mode */
+    // Bundler mode matches Vite's module resolution and TypeScript transformation.
     "moduleResolution": "bundler",
+    // Allow imports that explicitly end in .ts or .tsx, which Vite can resolve.
     "allowImportingTsExtensions": true,
+    // Permit importing JSON files when the project needs configuration or data files.
     "resolveJsonModule": true,
+    // Require each source file to be transformable independently by the bundler.
     "isolatedModules": true,
+    // Check types without writing compiled .js files; Vite performs the actual build.
     "noEmit": true,
+    // Use React 17+ JSX transformation so JSX does not require a manual React import in every file.
     "jsx": "react-jsx",
 
-    /* Linting */
+    // Enable strict null checks, stricter function typing, and other safety checks.
     "strict": true,
+    // Report declared local variables that are never used, helping remove dead code.
     "noUnusedLocals": true,
+    // Report function parameters that are declared but never used.
     "noUnusedParameters": true,
+    // Reject switch cases that accidentally fall through without an explicit marker.
     "noFallthroughCasesInSwitch": true
   },
+  // Check source files under src/ by default, including nested component and utility files.
   "include": ["src"],
+  // Exclude this test fixture from the normal application type-check include list.
   "exclude": ["src/test-app.test.tsx"]
 }

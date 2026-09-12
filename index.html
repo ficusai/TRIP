@@ -1,22 +1,40 @@
 <!doctype html>
+<!-- The document uses English text by default; change this code for another language. -->
 <html lang="en">
   <head>
+    <!-- Declare UTF-8 so punctuation and non-English characters display correctly. -->
     <meta charset="UTF-8" />
+    <!-- Make the page fit phone and desktop screens; maximum-scale and user-scalable=no
+         keep the app from zooming like a normal article page. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- This description is used by search engines and some link previews. -->
     <meta name="description" content="Trip Mapper — An offline-first world tour route planner. Plan your journey, add stops with photos, and export a standalone map for true offline use." />
+    <!-- Use the same very dark navy as the app background for the browser chrome. -->
     <meta name="theme-color" content="#020617" />
+    <!-- Tell supporting browsers that the interface is designed as a dark-color scheme. -->
     <meta name="color-scheme" content="dark" />
+    <!-- Open Graph title shown when the page is shared on services that read this metadata. -->
     <meta property="og:title" content="Trip Mapper — Offline World Tour Builder" />
+    <!-- Open Graph summary shown with the shared link. -->
     <meta property="og:description" content="Plan your world tour route offline. Add stops, attach photos, calculate distances." />
+    <!-- Declare that the shared object is a web page rather than an article or video. -->
     <meta property="og:type" content="website" />
+    <!-- Embed a small TM favicon directly in the page so no separate icon request is needed.
+         The public/favicon.svg file is not referenced by this page. -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='12' fill='%230ea5e9'/><text x='24' y='32' text-anchor='middle' fill='white' font-size='28' font-weight='bold' font-family='sans-serif'>TM</text></svg>" />
+    <!-- Allow iOS Safari to launch the page in a standalone app-like window. -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- Use a translucent black iOS status bar when standalone mode is active. -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Set the short name iOS may show under the app icon. -->
     <meta name="apple-mobile-web-app-title" content="Trip Mapper" />
+    <!-- This text appears in the browser tab and accessibility information. -->
     <title>Trip Mapper — Offline World Tour Builder</title>
   </head>
   <body>
+    <!-- React looks for this exact id in src/main.tsx and mounts the application here. -->
     <div id="root"></div>
+    <!-- Load the TypeScript entry module; Vite transforms and bundles it for the browser. -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

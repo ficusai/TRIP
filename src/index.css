@@ -1,3 +1,7 @@
+/* Tailwind CSS v4 entry point
+ * Dark-mode variants in Tailwind v4 are activated via `data-theme="dark"` on an
+ * ancestor (not a utility class on the element).
+ */
 @import "tailwindcss";
 
 @theme {
@@ -64,6 +68,14 @@ html, body, #root {
 }
 
 /* ─── GPU Acceleration & Rendering Optimizations ─── */
+/* GPU-related rendering hints
+ * WHAT THIS SECTION IS: A set of performance-tuning CSS properties for
+ *   the map's internal layers. These rules are hints that may help the
+ *   browser use the graphics card (GPU) to render the map instead of the
+ *   slower CPU, which may keep panning and zooming smooth on lower-end machines.
+ * WHY IT EXISTS: Without these, the map may stutter or feel laggy when
+ *   the user pans, zooms, or animates, especially with many tiles loaded.
+ */
 .leaflet-tile-pane {
   image-rendering: auto;
   transform: translateZ(0);
@@ -173,12 +185,17 @@ html, body, #root {
 
 /* ─── UI Performance Enhancements ─────────────────────────────── */
 
+/*
+ * NOTE: .content-visible-auto is defined but not currently used
+ * anywhere in the app. It is kept here as a ready-to-use utility
+ * for future scrollable lists.
+ */
 .content-visible-auto {
   content-visibility: auto;
   contain-intrinsic-size: 100px;
 }
 
-/* ─── Premium Scrollbar Styling ───────────────────────────────── */
+/* Premium Scrollbar Styling */
 
 * {
   scrollbar-width: thin;
@@ -200,7 +217,7 @@ html, body, #root {
   background: #475569;
 }
 
-/* ─── Micro-animation Utilities ───────────────────────────────── */
+/* Micro-animation Utilities */
 
 @keyframes subtle-shimmer {
   0%   { opacity: 0.7; }
